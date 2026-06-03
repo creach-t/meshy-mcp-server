@@ -12,6 +12,7 @@ import {
   PoseMode
 } from "./constants.js";
 
+// Texture URLs can be an array of objects (text-to-3d) or a single object (image-to-3d/remesh)
 export interface TextureUrlsObject {
   base_color?: string;
   metallic?: string;
@@ -20,15 +21,18 @@ export interface TextureUrlsObject {
   ao?: string;
 }
 
+// Task Error (API returns as "task_error")
 export interface TaskError {
   code?: string;
   message: string;
 }
 
+// API response for task creation (all endpoints return this shape)
 export interface CreateTaskApiResponse {
   result: string;
 }
 
+// Text-to-3D API request body
 export interface TextTo3DApiRequest {
   mode: string;
   prompt: string;
@@ -45,6 +49,7 @@ export interface TextTo3DApiRequest {
   origin_at?: string;
 }
 
+// Image-to-3D API request body
 export interface ImageTo3DApiRequest {
   image_url: string;
   enable_pbr: boolean;
@@ -67,6 +72,7 @@ export interface ImageTo3DApiRequest {
   origin_at?: string;
 }
 
+// Text-to-3D Refine API request body
 export interface TextTo3DRefineApiRequest {
   mode: string;
   preview_task_id: string;
@@ -80,6 +86,7 @@ export interface TextTo3DRefineApiRequest {
   origin_at?: string;
 }
 
+// Multi-Image-to-3D API request body
 export interface MultiImageTo3DApiRequest {
   image_urls: string[];
   enable_pbr: boolean;
@@ -102,6 +109,7 @@ export interface MultiImageTo3DApiRequest {
   origin_at?: string;
 }
 
+// Remesh API request body
 export interface RemeshApiRequest {
   target_formats: string[];
   resize_height: number;
@@ -114,6 +122,7 @@ export interface RemeshApiRequest {
   origin_at?: string;
 }
 
+// Retexture API request body
 export interface RetextureApiRequest {
   enable_original_uv: boolean;
   enable_pbr: boolean;
@@ -126,6 +135,7 @@ export interface RetextureApiRequest {
   target_formats?: string[];
 }
 
+// Rig API request body
 export interface RigApiRequest {
   height_meters: number;
   input_task_id?: string;
@@ -133,6 +143,7 @@ export interface RigApiRequest {
   texture_image_url?: string;
 }
 
+// Animate API request body
 export interface AnimateApiRequest {
   rig_task_id: string;
   action_id: number;
@@ -142,6 +153,8 @@ export interface AnimateApiRequest {
   };
 }
 
+// Multi-Color Print API request body (POST /openapi/v1/print/multi-color)
+// Provide exactly one of input_task_id / model_url.
 export interface MultiColorPrintApiRequest {
   input_task_id?: string;
   model_url?: string;
@@ -149,16 +162,21 @@ export interface MultiColorPrintApiRequest {
   max_depth?: number;
 }
 
+// Analyze Printability API request body (POST /openapi/v1/print/analyze)
+// Provide exactly one of input_task_id / model_url.
 export interface AnalyzePrintabilityApiRequest {
   input_task_id?: string;
   model_url?: string;
 }
 
+// Repair Printability API request body (POST /openapi/v1/print/repair)
+// Provide exactly one of input_task_id / model_url.
 export interface RepairPrintabilityApiRequest {
   input_task_id?: string;
   model_url?: string;
 }
 
+// Printability evaluation result (returned by GET /openapi/v1/print/analyze/:id once SUCCEEDED)
 export interface PrintabilityResult {
   _version: string;
   status: "healthy" | "warning" | "error" | "unknown";
@@ -175,6 +193,7 @@ export interface PrintabilityResult {
   evaluated_at: number;
 }
 
+// Text-to-Image API request body
 export interface TextToImageApiRequest {
   ai_model: string;
   prompt: string;
@@ -183,6 +202,7 @@ export interface TextToImageApiRequest {
   pose_mode?: string;
 }
 
+// Image-to-Image API request body
 export interface ImageToImageApiRequest {
   ai_model: string;
   prompt: string;
@@ -203,6 +223,7 @@ export interface Task {
   updated_at?: string;
   finished_at?: string | number;
 
+  // These are top-level in the API response, NOT nested under "result"
   model_urls?: {
     glb?: string;
     fbx?: string;
@@ -217,8 +238,8 @@ export interface Task {
   // Populated only on print-analyze tasks once SUCCEEDED
   printability?: PrintabilityResult;
   thumbnail_url?: string;
-  // text-to-image / image-to-image: array of generated image URLs
   image_urls?: string[];
+  generate_multi_view?: boolean;
   texture_urls?: TextureUrlsObject[] | TextureUrlsObject;
   video_url?: string;
   vertex_count?: number;
@@ -245,6 +266,7 @@ export interface Task {
       running_fbx_url?: string;
       running_armature_glb_url?: string;
     };
+    // Animation tasks
     animation_glb_url?: string;
     animation_fbx_url?: string;
     processed_usdz_url?: string;
@@ -253,6 +275,7 @@ export interface Task {
   };
 }
 
+// Text-to-3D Arguments
 export interface TextTo3DArgs {
   prompt: string;
   ai_model: AIModel;
@@ -264,6 +287,7 @@ export interface TextTo3DArgs {
   pose_mode?: PoseMode;
 }
 
+// Image-to-3D Arguments
 export interface ImageTo3DArgs {
   image_url: string;
   ai_model?: AIModel;
@@ -282,6 +306,7 @@ export interface ImageTo3DArgs {
   save_pre_remeshed_model?: boolean;
 }
 
+// API Request/Response Types
 export interface CreateTaskRequest {
   mode: string;
   args: TextTo3DArgs | ImageTo3DArgs;
@@ -302,11 +327,13 @@ export interface ListTasksResponse {
   offset: number;
 }
 
+// Pagination
 export interface PaginationParams {
   limit: number;
   offset: number;
 }
 
+// Balance
 export interface BalanceResponse {
   balance: number;
 }
@@ -320,6 +347,7 @@ export interface PaginatedResponse<T> {
   next_offset?: number;
 }
 
+// Model Summary (for listing)
 export interface ModelSummary {
   id: string;
   name: string;
